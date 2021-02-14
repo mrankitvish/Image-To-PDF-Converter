@@ -1,0 +1,45 @@
+from tkinter import *
+import tkinter.messagebox as tmsg
+import img2pdf
+from tkinter import filedialog
+import os
+
+root = Tk()
+root.geometry("600x400")
+root.resizable(0, 0)
+# root.wm_iconbitmap("pdf.ico")
+root.title("Image to PDF Converter -V0.10")
+
+
+def convert():
+    final_filePath = []
+    file_path = filedialog.askdirectory()
+    
+    output = file_path + "/" + "output.pdf"
+    with open(output, "wb") as f:
+
+        for imgPath in os.listdir(file_path):
+            if imgPath.endswith(".png") or imgPath.endswith(".jpg") or imgPath.endswith(".jpeg"):
+                imgPath = file_path + "/" + imgPath
+                final_filePath.append(imgPath)
+
+        try:
+            f.write(img2pdf.convert(final_filePath))
+            f.close()
+            tmsg.showinfo("Image to PDF Converter","PDF Created Successfully! ")
+        except IndexError: 
+            tmsg.showerror("Image to PDF Converter","Image File Not Found!\nSuch as jpg, png, jpeg")
+        except img2pdf.AlphaChannelError:
+            tmsg.showerror("Image to PDF Converter","Found Transparency on Image!")
+        except FileNotFoundError:
+            tmsg.showerror("Image to PDF Converter","File not found!")
+        
+        
+    
+Label(root,text="Select the folder where \nall the images are present",font = 'Arial 18 italic').place(x=170,y=100)
+
+
+
+Button(root,text="Browse:",command=convert,font = 'Arial 15 bold',fg="white",bg="green", width=20).place(x=190,y=240)
+
+root.mainloop()
